@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const DirectoryNamedWebpackPlugin = require("directory-named-webpack-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
@@ -25,13 +26,7 @@ module.exports = {
         test: /\.(ts|tsx|js|jsx|map)$/,
         exclude: /node_modules/,
         use: [
-          'babel-loader',
-          {
-            loader: 'eslint-loader',
-            options: {
-              fix: true,
-            },
-          },
+          'babel-loader'
         ],
       },
       {
@@ -65,6 +60,10 @@ module.exports = {
     new webpack.ProvidePlugin({
       "Hammer": "hammerjs/hammer"
     }),
+      new ESLintPlugin({
+          extensions: ['.js', '.jsx'],
+          exclude: ['node_modules']
+      })
   ],
   resolve: {
     extensions: ['.js', '.jsx'],

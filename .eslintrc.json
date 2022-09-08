@@ -1,6 +1,6 @@
 {
 	"extends": ["airbnb", "plugin:react/recommended"],
-	"parser": "babel-eslint",
+	"parser": "@babel/eslint-parser",
 	"env": {
 		"browser": true
 	},
@@ -28,7 +28,9 @@
 		"react/jsx-props-no-spreading": 1,
 		"jsx-a11y/control-has-associated-label": 0,
 		"import/no-unresolved": 0,
-		"no-mixed-operators": 0
+		"no-mixed-operators": 0,
+		"linebreak-style": 0,
+		"no-multiple-empty-lines": 0
 	},
   "settings": {
 		"import/resolver": "webpack",

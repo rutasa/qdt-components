@@ -22,6 +22,8 @@ const QdtViz = ({ app, options: optionsProp, properties: propertiesProp }) => {
     cols: [],
     options: {},
     height: 400,
+    width: 900,
+    selections: {},
   };
   const defaultProps = {
     exportData: false,
@@ -43,12 +45,27 @@ const QdtViz = ({ app, options: optionsProp, properties: propertiesProp }) => {
       qVizPromise = app.getObject(elementRef.current, 'CurrentSelections');
       options.height = 50;
     } else if (options.id) {
-      qVizPromise = app.visualization.get(options.id);
+      qVizPromise = app.visualization.get(options.id).then((viz) => {
+        try {
+          Object.entries(options.selections).map(([key, value]) => {
+            if (typeof value === 'string' || value instanceof String) {
+              app.field(key).selectMatch(value, false);
+            } else {
+              app.field(key).selectValues(value, false, false);
+            }
+            return true;
+          });
+          return viz;
+        } catch (error) {
+          console.log('failed to select', error);
+        }
+      });
     } else {
       qVizPromise = app.visualization.create(options.type, options.cols, options.options);
     }
     const _qViz = await qVizPromise;
-    if (options.id && options.id !== 'CurrentSelections') _qViz.setOptions(options);
+    const { selections, ..._options } = options;
+    if (options.id && options.id !== 'CurrentSelections') _qViz.setOptions(_options);
     await setQViz(_qViz);
   };
 
@@ -106,7 +123,7 @@ const QdtViz = ({ app, options: optionsProp, properties: propertiesProp }) => {
 
   return (
     <>
-      <div ref={elementRef} style={{ height: options.height }} />
+      <div ref={elementRef} style={{ height: options.height, width: options.width }} />
       {properties.exportData
         && (
         <Button variant="outline" color="default" onClick={handleExportData}>
